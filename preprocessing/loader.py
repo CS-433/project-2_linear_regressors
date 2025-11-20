@@ -13,9 +13,7 @@ def load_raw_data(train_size, valid_size):
     - y_valid: list[int]
     """
 
-    # ================================
-    # LOAD TRAIN (pos + neg)
-    # ================================
+    # load train (pos + neg)
     with open("twitter-datasets/train_pos_full.txt", "r") as f:
         pos = [line.strip() for line in f]
 
@@ -44,9 +42,7 @@ def load_raw_data(train_size, valid_size):
     y_train = df_train["label"].tolist()
     y_valid = df_valid["label"].tolist()
 
-    # ================================
-    # LOAD TEST
-    # ================================
+    # load test
     test_texts = []
     with open("twitter-datasets/test_data.txt", "r") as f:
         for line in f:

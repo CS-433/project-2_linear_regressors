@@ -209,7 +209,8 @@ __marimo__/
 # Data
 twitter-datasets/
 
-# Save models
+# Large files
+results/submission
 saved_models/
 ancient/
 *.pt

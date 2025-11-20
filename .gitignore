@@ -208,3 +208,10 @@ __marimo__/
 
 # Data
 twitter-datasets/
+
+# Save models
+saved_models/
+ancient/
+*.pt
+*.bin
+*.pkl

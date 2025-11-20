@@ -219,3 +219,4 @@ ancient/
 *.pt
 *.bin
 *.pkl
+.DS_Store

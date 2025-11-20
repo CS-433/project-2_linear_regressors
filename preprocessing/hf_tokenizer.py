@@ -35,9 +35,9 @@ def make(train_texts, train_labels, valid_texts, valid_labels, test_texts, model
     test_ds  = Dataset.from_dict({"text": test_texts})
 
     # apply tokenization
-    train_ds = train_ds.map(tokenize, batched=True)
-    valid_ds = valid_ds.map(tokenize, batched=True)
-    test_ds  = test_ds.map(tokenize, batched=True)
+    train_ds = train_ds.map(tokenize, batched=True, load_from_cache_file=False)
+    valid_ds = valid_ds.map(tokenize, batched=True, load_from_cache_file=False)
+    test_ds  = test_ds.map(tokenize, batched=True, load_from_cache_file=False)
 
     # remove text column
     train_ds = train_ds.remove_columns(["text"])

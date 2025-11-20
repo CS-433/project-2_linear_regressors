@@ -4,14 +4,14 @@ from models import logreg, svm, random_forest, mlp, hf_classifier
 # from trainers.sklearn_trainer import train_sklearn
 from trainers.hf_trainer import train_hf
 from helpers.plots import plot_confusion_matrix, plot_training_curves, save_metrics, plot_comparison
-from helpers.utils import save_submit
+from helpers.utils import save_submit, ensure_dir, set_global_seed
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=100_000, valid_size=10_000):
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000):
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
@@ -114,7 +114,8 @@ class Pipeline:
 
             plot_confusion_matrix(
                 preds, self.y_valid,
-                f"{self.embedding}_{self.train_size}"
+                f"{self.embedding}",
+                self.train_size
             )
             plot_training_curves(
                 self.logger, self.embedding, self.train_size
@@ -143,7 +144,8 @@ class Pipeline:
         plot_confusion_matrix(
             preds,
             self.y_valid,
-            f"{self.embedding}_{self.model_name}_{self.train_size}"
+            f"{self.embedding}_{self.model_name}",
+            self.train_size
         )
 
         save_metrics(
@@ -196,6 +198,7 @@ class Pipeline:
         print(f"Train size = {self.train_size}")
         print("====================================\n")
 
+        set_global_seed(42)
         self.load_data()
         self.preprocess()
         self.train()

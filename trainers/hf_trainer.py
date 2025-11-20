@@ -48,6 +48,8 @@ def train_hf(model_name, tokenizer, train_ds, valid_ds, train_size):
         no_cuda=False if device.type == "mps" else None,
         fp16=False if device.type == "mps" else None,
         bf16=True  if device.type == "mps" else None,
+        seed=42,
+        data_seed=42,
     )
 
     # logger

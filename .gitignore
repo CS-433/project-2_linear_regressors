@@ -210,7 +210,6 @@ __marimo__/
 twitter-datasets/
 
 # Large files
-results/submission
 saved_models/
 ancient/
 *.pt

@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
+import random
+import torch
 
 def ensure_dir(path):
     os.makedirs(path, exist_ok=True)
@@ -15,3 +17,21 @@ def save_submit(preds, name):
     df.to_csv(path, index=False)
     print(f">>> Saved {path}")
     return path
+
+def set_global_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+    # MPS determinism
+    if torch.backends.mps.is_available():
+        torch.mps.manual_seed(seed)
+
+    # Ensure deterministic ops
+    torch.use_deterministic_algorithms(True, warn_only=True)
+
+    os.environ["PYTHONHASHSEED"] = str(seed)

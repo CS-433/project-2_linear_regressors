@@ -34,12 +34,12 @@ project/
 │   ├── tfidf.py                  # TF-IDF vectorizer
 │   └── word2vec.py               # Word2Vec embeddings
 │
-├── results/                      # All produced results
+├── results/     !GITIGNORE!      # All produced results
 │   ├── comparison_plots/         # Plots comparing multiple models/embeddings
 │   ├── individual_plots/         # Single-model training/evaluation curves
 │   └── submission/               # Generated submission CSV files
 │
-├── saved_models/                 # Saved models after training
+├── saved_models/ !GITIGNORE!     # Saved models after training
 │   ├── embeddings/               # (Optional) Precomputed embeddings storage
 │   ├── hf/                       # HuggingFace model checkpoints
 │   └── sklearn/                  # Pickled sklearn models
@@ -49,7 +49,7 @@ project/
 │   ├── logger_hf.py              # Custom HF logger for loss/accuracy
 │   └── sklearn_trainer.py        # Training loop for sklearn models
 │
-├── twitter-datasets/             # Original dataset provided for the project
+├── twitter-datasets/ !GITIGNORE! # Original dataset provided for the project
 │
 ├── main.py                       # Main entry point to run any pipeline
 ├── env.yml                       # Conda environment definition

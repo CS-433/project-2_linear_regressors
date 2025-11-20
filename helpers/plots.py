@@ -6,7 +6,7 @@ from sklearn.metrics import confusion_matrix
 from helpers.utils import ensure_dir
 import numpy as np
 
-def plot_confusion_matrix(preds, true_labels, name):
+def plot_confusion_matrix(preds, true_labels, name, train_size):
     ensure_dir("results/individual_plots")
     cm = confusion_matrix(true_labels, preds)
 
@@ -16,8 +16,8 @@ def plot_confusion_matrix(preds, true_labels, name):
         annot=True, fmt="d", cmap="Blues",
         xticklabels=["neg","pos"], yticklabels=["neg","pos"]
     )
-    plt.title(name)
-    path = f"results/individual_plots/{name}/cm_{name}.png"
+    plt.title(f"Confusion matrix for {name} with {train_size} tweets")
+    path = f"results/individual_plots/{name}/cm_{name}_{train_size}.png"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     plt.savefig(path, dpi=200, bbox_inches="tight")
     plt.close()
@@ -74,6 +74,9 @@ def save_metrics(name, acc, prec, rec, f1, path="results/comparison_plots/metric
             data = json.load(f)
     else:
         data = []
+
+    # remove previous entries with the same name
+    data = [d for d in data if d["name"] != name]
 
     data.append(entry)
 

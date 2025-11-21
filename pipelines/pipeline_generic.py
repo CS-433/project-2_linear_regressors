@@ -49,7 +49,7 @@ class Pipeline:
                 self.train_txt, self.valid_txt, self.test_txt
             )
 
-        elif self.embedding.startswith("vinai/"):  # bertweet / roberta...
+        elif "bert" in self.embedding.lower():  # bertweet / roberta...
             (self.tokenizer,
             self.train_ds,
             self.valid_ds,
@@ -70,7 +70,7 @@ class Pipeline:
         print(f"[TRAIN] Training model: {self.model_name}")
 
         # HuggingFace models
-        if self.embedding.startswith("vinai/"):
+        if "bert" in self.embedding.lower():
             (self.trainer,
              self.logger) = train_hf(
                 model_name=self.embedding,
@@ -103,7 +103,7 @@ class Pipeline:
         print("[EVAL] Evaluating model...")
 
         # HuggingFace evaluation
-        if self.embedding.startswith("vinai/"):
+        if "bert" in self.embedding.lower():
 
             preds = self.trainer.predict(self.valid_ds).predictions.argmax(1)
 
@@ -163,7 +163,7 @@ class Pipeline:
         print("[SAVE] Saving predictions + model...")
 
         # HuggingFace save
-        if self.embedding.startswith("vinai/"):
+        if "bert" in self.embedding.lower():
             test_preds = self.trainer.predict(self.test_ds).predictions.argmax(1)
 
             save_submit(test_preds, f"{self.embedding}_{self.train_size}")

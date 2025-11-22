@@ -7,6 +7,8 @@ from helpers.utils import ensure_dir
 import numpy as np
 
 def plot_confusion_matrix(preds, true_labels, name, train_size):
+    if train_size == 2_250_000:
+        train_size = "full"
     ensure_dir("results/individual_plots")
     cm = confusion_matrix(true_labels, preds)
 
@@ -25,6 +27,8 @@ def plot_confusion_matrix(preds, true_labels, name, train_size):
 
 
 def plot_training_curves(logger, model_name, train_size):
+    if train_size == 2_250_000:
+        train_size = "full"
     ensure_dir("results/individual_plots")
 
     # train loss

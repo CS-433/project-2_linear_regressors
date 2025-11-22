@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000):
+    def __init__(self, embedding, model, train_size=2_250_000, valid_size=250_000):
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
@@ -121,8 +121,13 @@ class Pipeline:
                 self.logger, self.embedding, self.train_size
             )
 
-            save_metrics(
+            if self.train_size == 2_250_000:
+                name=f"{self.embedding}_full",
+            else:   
                 name=f"{self.embedding}_{self.train_size}",
+            
+            save_metrics(
+                name=name,
                 acc=acc,
                 prec=prec,
                 rec=rec,
@@ -148,8 +153,12 @@ class Pipeline:
             self.train_size
         )
 
-        save_metrics(
+        if self.train_size == 2_250_000:
+            name=f"{self.embedding}_{self.model_name}_full",
+        else:
             name=f"{self.embedding}_{self.model_name}_{self.train_size}",
+        save_metrics(
+            name=name,
             acc=acc,
             prec=prec,
             rec=rec,
@@ -166,13 +175,17 @@ class Pipeline:
         if "bert" in self.embedding.lower():
             test_preds = self.trainer.predict(self.test_ds).predictions.argmax(1)
 
-            save_submit(test_preds, f"{self.embedding}_{self.train_size}")
-
-            save_dir = f"saved_models/hf/{self.embedding}_{self.train_size}"
+            if self.train_size == 2_250_000:
+                save_submit(test_preds, f"{self.embedding}_full")
+                save_dir = f"saved_models/hf/{self.embedding}_full"
+            else:   
+                save_submit(test_preds, f"{self.embedding}_{self.train_size}")
+                save_dir = f"saved_models/hf/{self.embedding}_{self.train_size}"
             from helpers.utils import ensure_dir
             ensure_dir(save_dir)
-            self.trainer.save_model(f"saved_models/hf/{self.embedding}_{self.train_size}")
-            self.tokenizer.save_pretrained(f"saved_models/hf/{self.embedding}_{self.train_size}")
+            
+            self.trainer.save_model(save_dir)
+            self.tokenizer.save_pretrained(save_dir)
 
             return
 

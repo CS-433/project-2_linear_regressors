@@ -59,7 +59,7 @@ class Pipeline:
                 valid_texts=self.valid_txt,
                 valid_labels=self.valid_labels,
                 test_texts=self.test_txt,
-                model_name=self.embedding
+                model_name=self.embedding,
             )
 
             
@@ -122,9 +122,9 @@ class Pipeline:
             )
 
             if self.train_size == 2_250_000:
-                name=f"{self.embedding}_full",
+                name=f"{self.embedding}_full"
             else:   
-                name=f"{self.embedding}_{self.train_size}",
+                name=f"{self.embedding}_{self.train_size}"
             
             save_metrics(
                 name=name,
@@ -154,9 +154,9 @@ class Pipeline:
         )
 
         if self.train_size == 2_250_000:
-            name=f"{self.embedding}_{self.model_name}_full",
+            name=f"{self.embedding}_{self.model_name}_full"
         else:
-            name=f"{self.embedding}_{self.model_name}_{self.train_size}",
+            name=f"{self.embedding}_{self.model_name}_{self.train_size}"
         save_metrics(
             name=name,
             acc=acc,

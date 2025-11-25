@@ -64,6 +64,12 @@ def plot_training_curves(logger, model_name, train_size):
 def save_metrics(name, acc, prec, rec, f1, path="results/comparison_plots/metrics.json"):
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
+    if isinstance(name, list):
+        name = name[0]
+    elif not isinstance(name, str):
+        name = str(name)
+
+
     entry = {
         "name": name,
         "acc": acc,

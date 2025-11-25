@@ -35,7 +35,6 @@ def load_raw_data(train_size, valid_size):
     # Subsample based on requested sizes
     df_train = df_train.sample(train_size, random_state=42)
     df_valid = df_valid.sample(valid_size, random_state=42)
-
     train_txt = df_train["text"].tolist()
     valid_txt = df_valid["text"].tolist()
 

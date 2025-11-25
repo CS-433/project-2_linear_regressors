@@ -12,6 +12,7 @@ def save_submit(preds, name):
         "Id": np.arange(1, len(preds)+1),
         "Prediction": preds
     })
+    df['Prediction'] = df['Prediction'].apply(lambda x: -1 if x == 0 else 1)
     path = f"results/submission/submit_{name}.csv"
     ensure_dir(os.path.dirname(path))
     df.to_csv(path, index=False)

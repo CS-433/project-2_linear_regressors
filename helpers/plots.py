@@ -160,7 +160,7 @@ def plot_comparison(models=None, labels=None,
     ensure_dir("results/comparison_plots")
 
     # Filename includes only the chosen models
-    short_name = "_".join([m.replace("/", "-") for m in models])
+    short_name = "_".join([str(m).replace("/", "-") for m in models]) # jai changé ca
     png_path = f"results/comparison_plots/{output_name}_{short_name}.png"
 
     plt.tight_layout()

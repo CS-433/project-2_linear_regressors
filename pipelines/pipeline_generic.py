@@ -1,7 +1,7 @@
 from preprocessing import hf_tokenizer, tfidf, fasttext, word2vec, glove
 from preprocessing.loader import load_raw_data
 from models import logreg, svm, random_forest, mlp, hf_classifier
-# from trainers.sklearn_trainer import train_sklearn
+from trainers.sklearn_trainer import train_sklearn
 from trainers.hf_trainer import train_hf
 from helpers.plots import plot_confusion_matrix, plot_training_curves, save_metrics, plot_comparison
 from helpers.utils import save_submit, ensure_dir, set_global_seed
@@ -11,11 +11,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_250_000, valid_size=250_000):
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None):  ###sara### ajout de alpha, gamma, max_iter
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
         self.valid_size = valid_size
+        self.alpha = alpha
+        self.gamma = gamma
+        self.max_iter = max_iter
 
     def load_data(self):
         (self.train_txt,
@@ -83,7 +86,11 @@ class Pipeline:
 
         # Sklearn models
         if self.model_name == "logreg":
-            self.model = logreg.make()
+            self.model = logreg.make(
+                alpha=self.alpha,
+                gamma=self.gamma, 
+                max_iter=self.max_iter
+            ) ###sara###
 
         elif self.model_name == "svm":
             self.model = svm.make()
@@ -97,7 +104,8 @@ class Pipeline:
         else:
             raise ValueError(f"Unknown learning model: {self.model_name}")
 
-        train_sklearn(self.model, self.X_train, self.y_train)
+        self.model.train(self.X_train, self.y_train) ###sara###
+#train_sklearn(self.model, self.X_train, self.y_train)
 
     def evaluate(self):
         print("[EVAL] Evaluating model...")
@@ -175,17 +183,13 @@ class Pipeline:
         if "bert" in self.embedding.lower():
             test_preds = self.trainer.predict(self.test_ds).predictions.argmax(1)
 
-            if self.train_size == 2_250_000:
-                save_submit(test_preds, f"{self.embedding}_full")
-                save_dir = f"saved_models/hf/{self.embedding}_full"
-            else:   
-                save_submit(test_preds, f"{self.embedding}_{self.train_size}")
-                save_dir = f"saved_models/hf/{self.embedding}_{self.train_size}"
-            from helpers.utils import ensure_dir
+            save_submit(test_preds, f"{self.embedding}_{self.train_size}")
+
+            save_dir = f"saved_models/hf/{self.embedding}_{self.train_size}"
+            #from helpers.utils import ensure_dir ###sara###
             ensure_dir(save_dir)
-            
-            self.trainer.save_model(save_dir)
-            self.tokenizer.save_pretrained(save_dir)
+            self.trainer.save_model(f"saved_models/hf/{self.embedding}_{self.train_size}")
+            self.tokenizer.save_pretrained(f"saved_models/hf/{self.embedding}_{self.train_size}")
 
             return
 

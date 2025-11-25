@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
-def load_raw_data(train_size, valid_size):
+def load_raw_data(train_size, valid_size, random_state=42): ##########
     """
     Load positive/negative tweets + test tweets.
     Return:
@@ -27,17 +27,25 @@ def load_raw_data(train_size, valid_size):
 
     # Split
     df_train, df_valid = train_test_split(
-        df, test_size=0.1, random_state=42, shuffle=True
+        df, test_size=0.1, random_state=random_state, shuffle=True ##########
     )
 
-    df_train = df_train.sample(frac=1, random_state=42)  # shuffle
+    # df_train = df_train.sample(frac=1, random_state=42)  # shuffle
 
     # Subsample based on requested sizes
-    df_train = df_train.sample(train_size, random_state=42)
-    df_valid = df_valid.sample(valid_size, random_state=42)
+    # df_train = df_train.sample(train_size, random_state=42)
+    # df_valid = df_valid.sample(valid_size, random_state=42)
+
+    # reset indices
+    df_train = df_train.reset_index(drop=True)
+    df_valid = df_valid.reset_index(drop=True)
+
+    # Deterministic subsampling
+    df_train = df_train.iloc[:train_size]
+    df_valid = df_valid.iloc[:valid_size]
+
     train_txt = df_train["text"].tolist()
     valid_txt = df_valid["text"].tolist()
-
     y_train = df_train["label"].tolist()
     y_valid = df_valid["label"].tolist()
 

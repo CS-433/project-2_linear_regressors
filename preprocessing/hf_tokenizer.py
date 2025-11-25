@@ -10,7 +10,8 @@ def make(train_texts, train_labels, valid_texts, valid_labels, test_texts, model
         tokenizer = AutoTokenizer.from_pretrained(
             model_name,
             use_fast=False,
-            normalization=True
+            # normalization=True
+            normalization=False
         )
     else:
         tokenizer = AutoTokenizer.from_pretrained(

@@ -11,8 +11,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000,      alpha=None, gamma=None, max_iter=None, # logreg + mlp model ###sara###
-    hidden_layer_sizes=None, activation=None, random_state=None # mlp model params ###sara###
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None, # logreg + mlp model ###sara###
+    hidden_layer_sizes=None, activation=None, random_state=42 # mlp model params ###sara###
     ):  ###sara### ajout de alpha, gamma, max_iter, hidden_layer_sizes, activation, random_state
         self.embedding = embedding
         self.model_name = model
@@ -85,7 +85,8 @@ class Pipeline:
                 tokenizer=self.tokenizer,
                 train_ds=self.train_ds,
                 valid_ds=self.valid_ds,
-                train_size=self.train_size
+                train_size=self.train_size,
+                random_state=self.random_state ##########
             )
             return
 
@@ -118,8 +119,7 @@ class Pipeline:
         else:
             raise ValueError(f"Unknown learning model: {self.model_name}")
 
-        
-#train_sklearn(self.model, self.X_train, self.y_train)
+
 
     def evaluate(self):
         print("[EVAL] Evaluating model...")
@@ -191,7 +191,6 @@ class Pipeline:
             save_submit(test_preds, f"{self.embedding}_{self.train_size}")
 
             save_dir = f"saved_models/hf/{self.embedding}_{self.train_size}"
-            #from helpers.utils import ensure_dir ###sara###
             ensure_dir(save_dir)
             self.trainer.save_model(f"saved_models/hf/{self.embedding}_{self.train_size}")
             self.tokenizer.save_pretrained(f"saved_models/hf/{self.embedding}_{self.train_size}")
@@ -220,7 +219,7 @@ class Pipeline:
         print(f"Train size = {self.train_size}")
         print("====================================\n")
 
-        set_global_seed(42)
+        set_global_seed(self.random_state) ##########
         self.load_data()
         self.preprocess()
         self.train()

@@ -1,7 +1,7 @@
 from preprocessing import hf_tokenizer, tfidf, fasttext, word2vec, glove
 from preprocessing.loader import load_raw_data
 from models import logreg, svm, random_forest, mlp, hf_classifier
-from trainers.sklearn_trainer import train_sklearn
+#from trainers.sklearn_trainer import train_sklearn
 from trainers.hf_trainer import train_hf
 from helpers.plots import plot_confusion_matrix, plot_training_curves, save_metrics, plot_comparison
 from helpers.utils import save_submit, ensure_dir, set_global_seed
@@ -11,7 +11,9 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None):  ###sara### ajout de alpha, gamma, max_iter
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000,      alpha=None, gamma=None, max_iter=None, # logreg + mlp model ###sara###
+    hidden_layer_sizes=None, activation=None, random_state=None # mlp model params ###sara###
+    ):  ###sara### ajout de alpha, gamma, max_iter, hidden_layer_sizes, activation, random_state
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
@@ -19,6 +21,9 @@ class Pipeline:
         self.alpha = alpha
         self.gamma = gamma
         self.max_iter = max_iter
+        self.hidden_layer_sizes = hidden_layer_sizes
+        self.activation = activation
+        self.random_state = random_state
 
     def load_data(self):
         (self.train_txt,
@@ -90,7 +95,8 @@ class Pipeline:
                 alpha=self.alpha,
                 gamma=self.gamma, 
                 max_iter=self.max_iter
-            ) ###sara###
+            )
+            self.model.train(self.X_train, self.y_train) ###sara###
 
         elif self.model_name == "svm":
             self.model = svm.make()
@@ -98,13 +104,21 @@ class Pipeline:
         elif self.model_name == "forest":
             self.model = random_forest.make()
 
-        elif self.model_name == "mlp":
-            self.model = mlp.make()
+        if self.model_name == "mlp":
+            self.model = mlp.make(
+                hidden_layer_sizes=self.hidden_layer_sizes,
+                activation=self.activation,
+                alpha=self.alpha,
+                max_iter=self.max_iter,
+                random_state=self.random_state
+            )
+            self.model.fit(self.X_train, self.y_train) ###sara###
+
 
         else:
             raise ValueError(f"Unknown learning model: {self.model_name}")
 
-        self.model.train(self.X_train, self.y_train) ###sara###
+        
 #train_sklearn(self.model, self.X_train, self.y_train)
 
     def evaluate(self):

@@ -21,10 +21,19 @@ hidden_layer_sizes=(256, 128)
 activation='relu'
 random_state=42
 
+# Parameters for the random forest model
+n_estimators=150
+max_depth=20
+
+# Parameters for the SVM model
+# paramètres du SVM
+C = 1.0
+loss = "hinge"
+max_iter_svm = 2000
 
 Pipeline(
     embedding="word2vec",
-    model="mlp",
+    model="svm",
     train_size=train_size,
     valid_size=valid_size,
     alpha=alpha_mlp,
@@ -32,10 +41,14 @@ Pipeline(
     #learning_rate_init=learning_rate_init,
     #learning_rate=learning_rate,
     #shuffle=shuffle,
-    max_iter=max_iter_mlp,
+    max_iter=max_iter_svm,
     hidden_layer_sizes=hidden_layer_sizes,
     activation=activation,
-    random_state=random_state
+    random_state=random_state,
+    n_estimators=n_estimators,
+    max_depth=max_depth,
+    C=C,
+    loss=loss
 ).run() 
 
 plot_comparison()

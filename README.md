@@ -50,9 +50,11 @@ project/
 │   ├── logger_hf.py              # Custom HF logger for loss/accuracy
 │   └── sklearn_trainer.py        # Training loop for sklearn models
 │
+├── analysis/                     # Hyperparameter search
+│   ├── grid_search.py            # Grid search to find optimal parameters for each
+│
 ├── twitter-datasets/ !GITIGNORE! # Original dataset provided for the project
 │
 ├── main.py                       # Main entry point to run any pipeline
 ├── env.yml                       # Conda environment definition
 └── README.md                     # Project documentation
-```

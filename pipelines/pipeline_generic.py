@@ -14,8 +14,8 @@ class Pipeline:
     def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000,      alpha=None, gamma=None, max_iter=None, # logreg + mlp model ###sara###
     hidden_layer_sizes=None, activation=None, random_state=42, # mlp model params ###sara###
     n_estimators=100, max_depth=None, # random forest params ###sara###
-    C=None, loss=None # SVM params ###sara###
-    ):
+    C=None, loss=None, # SVM params ###sara###
+    grid_search=False):
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
@@ -30,6 +30,7 @@ class Pipeline:
         self.max_depth = max_depth
         self.C = C
         self.loss = loss
+        self.grid_search = grid_search ####sara###  
 
 
     def load_data(self):
@@ -132,8 +133,7 @@ class Pipeline:
                 random_state=self.random_state
             )
             self.model.fit(self.X_train, self.y_train) ###sara###
-
-
+    
         else:
             raise ValueError(f"Unknown learning model: {self.model_name}")
 

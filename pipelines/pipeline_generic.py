@@ -1,7 +1,7 @@
 from preprocessing import hf_tokenizer, tfidf, fasttext, word2vec, glove
 from preprocessing.loader import load_raw_data
 from models import logreg, svm, random_forest, mlp, hf_classifier
-# from trainers.sklearn_trainer import train_sklearn
+#from trainers.sklearn_trainer import train_sklearn # to delete
 from trainers.hf_trainer import train_hf
 from helpers.plots import plot_confusion_matrix, plot_training_curves, save_metrics, plot_comparison
 from helpers.utils import save_submit, ensure_dir, set_global_seed
@@ -11,11 +11,26 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000):
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000,      alpha=None, gamma=None, max_iter=None, # logreg + mlp model ###sara###
+    hidden_layer_sizes=None, activation=None, random_state=42, # mlp model params ###sara###
+    n_estimators=100, max_depth=None, # random forest params ###sara###
+    C=None, loss=None # SVM params ###sara###
+    ):
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
         self.valid_size = valid_size
+        self.alpha = alpha
+        self.gamma = gamma
+        self.max_iter = max_iter
+        self.hidden_layer_sizes = hidden_layer_sizes
+        self.activation = activation
+        self.random_state = random_state
+        self.n_estimators = n_estimators
+        self.max_depth = max_depth
+        self.C = C
+        self.loss = loss
+
 
     def load_data(self):
         (self.train_txt,
@@ -49,7 +64,7 @@ class Pipeline:
                 self.train_txt, self.valid_txt, self.test_txt
             )
 
-        elif self.embedding.startswith("vinai/"):  # bertweet / roberta...
+        elif "bert" in self.embedding.lower():  # bertweet / roberta...
             (self.tokenizer,
             self.train_ds,
             self.valid_ds,
@@ -70,40 +85,65 @@ class Pipeline:
         print(f"[TRAIN] Training model: {self.model_name}")
 
         # HuggingFace models
-        if self.embedding.startswith("vinai/"):
+        if "bert" in self.embedding.lower():
             (self.trainer,
              self.logger) = train_hf(
                 model_name=self.embedding,
                 tokenizer=self.tokenizer,
                 train_ds=self.train_ds,
                 valid_ds=self.valid_ds,
-                train_size=self.train_size
+                train_size=self.train_size,
+                random_state=self.random_state ##########
             )
             return
 
         # Sklearn models
-        if self.model_name == "logreg":
-            self.model = logreg.make()
+        elif self.model_name == "logreg":
+            self.model = logreg.make(
+                alpha=self.alpha,
+                gamma=self.gamma, 
+                max_iter=self.max_iter
+            )
+            self.model.train(self.X_train, self.y_train) ###sara###
 
         elif self.model_name == "svm":
-            self.model = svm.make()
+            self.model = svm.make(
+                C=self.C,
+                loss=self.loss,
+                max_iter=self.max_iter
+            )
+            self.model.train(self.X_train, self.y_train) ###sara###
 
-        elif self.model_name == "forest":
-            self.model = random_forest.make()
+        elif self.model_name == "random_forest":
+            self.model = random_forest.make(
+                n_estimators=self.n_estimators,
+                max_depth=self.max_depth,
+                random_state=self.random_state
+            )
+            # Training
+            self.model.fit(self.X_train, self.y_train)
 
         elif self.model_name == "mlp":
-            self.model = mlp.make()
+            self.model = mlp.make(
+                hidden_layer_sizes=self.hidden_layer_sizes,
+                activation=self.activation,
+                alpha=self.alpha,
+                max_iter=self.max_iter,
+                random_state=self.random_state
+            )
+            self.model.fit(self.X_train, self.y_train) ###sara###
+
 
         else:
             raise ValueError(f"Unknown learning model: {self.model_name}")
 
-        train_sklearn(self.model, self.X_train, self.y_train)
+
 
     def evaluate(self):
         print("[EVAL] Evaluating model...")
 
         # HuggingFace evaluation
-        if self.embedding.startswith("vinai/"):
+        if "bert" in self.embedding.lower():
 
             preds = self.trainer.predict(self.valid_ds).predictions.argmax(1)
 
@@ -163,13 +203,12 @@ class Pipeline:
         print("[SAVE] Saving predictions + model...")
 
         # HuggingFace save
-        if self.embedding.startswith("vinai/"):
+        if "bert" in self.embedding.lower():
             test_preds = self.trainer.predict(self.test_ds).predictions.argmax(1)
 
             save_submit(test_preds, f"{self.embedding}_{self.train_size}")
 
             save_dir = f"saved_models/hf/{self.embedding}_{self.train_size}"
-            from helpers.utils import ensure_dir
             ensure_dir(save_dir)
             self.trainer.save_model(f"saved_models/hf/{self.embedding}_{self.train_size}")
             self.tokenizer.save_pretrained(f"saved_models/hf/{self.embedding}_{self.train_size}")
@@ -198,7 +237,7 @@ class Pipeline:
         print(f"Train size = {self.train_size}")
         print("====================================\n")
 
-        set_global_seed(42)
+        set_global_seed(self.random_state) ##########
         self.load_data()
         self.preprocess()
         self.train()

@@ -9,7 +9,8 @@ project/
 │   ├── cut_vocab.sh
 │   ├── glove_solution.py
 │   ├── glove_template.py
-│   └── pickle_vocab.py
+│   ├── pickle_vocab.py
+│   └── results/ !GITIGNORE!      # embeddings results of glove pipeline
 │
 ├── helpers/                      # Utility functions for metrics, plots, file handling…
 │   ├── metrics.py                # Accuracy / precision / recall / F1 helpers
@@ -34,7 +35,7 @@ project/
 │   ├── tfidf.py                  # TF-IDF vectorizer
 │   └── word2vec.py               # Word2Vec embeddings
 │
-├── results/     !GITIGNORE!      # All produced results
+├── results/                      # All produced results
 │   ├── comparison_plots/         # Plots comparing multiple models/embeddings
 │   ├── individual_plots/         # Single-model training/evaluation curves
 │   └── submission/               # Generated submission CSV files

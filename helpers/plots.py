@@ -7,6 +7,8 @@ from helpers.utils import ensure_dir
 import numpy as np
 
 def plot_confusion_matrix(preds, true_labels, name, train_size):
+    if train_size == 2_250_000:
+        train_size = "full"
     ensure_dir("results/individual_plots")
     cm = confusion_matrix(true_labels, preds)
 
@@ -25,16 +27,21 @@ def plot_confusion_matrix(preds, true_labels, name, train_size):
 
 
 def plot_training_curves(logger, model_name, train_size):
+    if train_size == 2_250_000:
+        train_size = "full"
     ensure_dir("results/individual_plots")
 
     # train loss
-    steps, losses = zip(*logger.train_loss)
-    plt.plot(steps, losses)
-    plt.title(f"Train Loss – {model_name} – {train_size}")
-    path = f"results/individual_plots/{model_name}/trainloss_{model_name}_{train_size}.png"
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    plt.savefig(path, dpi=200, bbox_inches="tight")
-    plt.close()
+    if logger.train_loss:
+        steps, losses = zip(*logger.train_loss)
+        plt.plot(steps, losses)
+        plt.title(f"Train Loss – {model_name} – {train_size}")
+        path = f"results/individual_plots/{model_name}/trainloss_{model_name}_{train_size}.png"
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        plt.savefig(path, dpi=200, bbox_inches="tight")
+        plt.close()
+    else:
+        print(f"[PLOT] No training loss data to plot for {model_name}")
 
     # eval loss
     if logger.eval_loss:
@@ -45,6 +52,8 @@ def plot_training_curves(logger, model_name, train_size):
         os.makedirs(os.path.dirname(path2), exist_ok=True)
         plt.savefig(path2, dpi=200, bbox_inches="tight")
         plt.close()
+    else:
+        print(f"[PLOT] No evaluation loss data to plot for {model_name}")
 
     # eval accuracy
     if logger.eval_acc:
@@ -55,10 +64,18 @@ def plot_training_curves(logger, model_name, train_size):
         os.makedirs(os.path.dirname(path3), exist_ok=True)
         plt.savefig(path3, dpi=200, bbox_inches="tight")
         plt.close()
+    else:
+        print(f"[PLOT] No evaluation accuracy data to plot for {model_name}")
 
 
 def save_metrics(name, acc, prec, rec, f1, path="results/comparison_plots/metrics.json"):
     os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    if isinstance(name, list):
+        name = name[0]
+    elif not isinstance(name, str):
+        name = str(name)
+
 
     entry = {
         "name": name,
@@ -150,7 +167,7 @@ def plot_comparison(models=None, labels=None,
     ensure_dir("results/comparison_plots")
 
     # Filename includes only the chosen models
-    short_name = "_".join([m.replace("/", "-") for m in models])
+    short_name = "_".join([str(m).replace("/", "-") for m in models]) # jai changé ca
     png_path = f"results/comparison_plots/{output_name}_{short_name}.png"
 
     plt.tight_layout()

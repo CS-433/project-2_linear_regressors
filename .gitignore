@@ -206,12 +206,18 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# vs_code
+.vscode/
+
 # Data
 twitter-datasets/
 
 # Large files
+glove_scripts/results/
 saved_models/
 ancient/
 *.pt
 *.bin
 *.pkl
+.DS_Store
+.DS_Store

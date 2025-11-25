@@ -2,7 +2,7 @@
 
 from sklearn.neural_network import MLPClassifier
 
-def make(hidden_layer_sizes, activation, alpha, max_iter, random_state, shuffle=True, learning_rate_init=0.001, learning_rate='constant'):
+def make(hidden_layer_sizes, activation, alpha, max_iter, random_state=42, shuffle=True, learning_rate_init=0.001, learning_rate='constant'):
     """
     Create and return an MLPModel instance.
 

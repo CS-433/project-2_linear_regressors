@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None):
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None):  ###sara### ajout de alpha, gamma, max_iter
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
@@ -90,7 +90,7 @@ class Pipeline:
                 alpha=self.alpha,
                 gamma=self.gamma, 
                 max_iter=self.max_iter
-            )
+            ) ###sara###
 
         elif self.model_name == "svm":
             self.model = svm.make()
@@ -104,7 +104,7 @@ class Pipeline:
         else:
             raise ValueError(f"Unknown learning model: {self.model_name}")
 
-        self.model.train(self.X_train, self.y_train)
+        self.model.train(self.X_train, self.y_train) ###sara###
 #train_sklearn(self.model, self.X_train, self.y_train)
 
     def evaluate(self):

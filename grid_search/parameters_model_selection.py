@@ -1,4 +1,4 @@
-# grid_search/model_selection.py
+# grid_search/parameters_model_selection.py
 
 import itertools
 import pandas as pd
@@ -6,23 +6,30 @@ from pipelines.pipeline_generic import Pipeline
 from sklearn.metrics import accuracy_score, f1_score
 
 # Définition des hyperparamètres à tester pour chaque modèle
+'''
+grid_params = {"mlp": {
+        "alpha": [0.02],
+        "hidden_layer_sizes": [(128,)],
+        "activation": ["relu"]}}
+
+embeddings = ["word2vec"]
+'''
 grid_params = {
     "logreg": {
-        "alpha": [0.01, 0.1, 1],
-        "gamma": [0.0, 0.5, 1.0]  # juste pour interface, peut être ignoré
+        "alpha": [0.1, 1, 5, 10]
     },
     "mlp": {
-        "alpha": [0.01, 0.1],
-        "hidden_layer_sizes": [(128,), (256,), (256, 128)],
-        "activation": ["relu", "tanh"]
+        "alpha": [0.01, 0.1, 1],
+        "hidden_layer_sizes": [(128,), (256,), (256, 128), (128, 128)],
+        "activation": ["relu", "tanh", "logistic"]
     },
     "svm": {
-        "C": [0.1, 1.0, 10.0],
-        "loss": ["hinge"]
+        "C": [0.01, 0.1, 1, 10],
+        "loss": ["hinge", "squared_hinge"]
     },
     "random_forest": {
-        "n_estimators": [100, 150],
-        "max_depth": [10, 20]
+        "n_estimators": [50, 100, 150, 200],
+        "max_depth": [10, 20, 30, None]  # None = pas de limite
     }
 }
 
@@ -30,6 +37,7 @@ grid_params = {
 embeddings = ["word2vec", "fasttext", "glove", "tfidf"]
 
 all_results = []
+
 
 for embedding in embeddings:
     for model_name, params_dict in grid_params.items():
@@ -47,7 +55,6 @@ for embedding in embeddings:
                     train_size=20000,
                     valid_size=2000,
                     alpha=params["alpha"],
-                    gamma=params["gamma"],
                     max_iter=1000
                 )
             elif model_name == "mlp":
@@ -98,5 +105,5 @@ for embedding in embeddings:
 
 # Sauvegarde
 df = pd.DataFrame(all_results)
-df.to_csv("analysis/grid_search_models_results.csv", index=False)
-print("\nGrid search completed! Results saved to analysis/grid_search_models_results.csv")
+df.to_csv("grid_search/parameters_model_selection.csv", index=False)
+print("\nGrid search completed! Results saved to grid_search/model_selection.csv")

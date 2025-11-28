@@ -1,7 +1,7 @@
 from sklearn.linear_model import LogisticRegression
 
 # Make function to create LogRegModel
-def make(alpha, gamma, max_iter):
+def make(alpha, max_iter):
     """
     Create and return a LogRegModel instance.
 
@@ -13,7 +13,7 @@ def make(alpha, gamma, max_iter):
     Returns:
         LogRegModel: An initialized logistic regression model wrapper.
     """
-    return LogRegModel(alpha=alpha, gamma=gamma, max_iter=max_iter)
+    return LogRegModel(alpha=alpha, max_iter=max_iter)
 
 # Class definition for LogRegModel
 class LogRegModel:
@@ -26,9 +26,8 @@ class LogRegModel:
         max_iter (int): Maximum number of iterations for the optimization algorithm
     """
 
-    def __init__(self, alpha, gamma, max_iter):
+    def __init__(self, alpha, max_iter):
         self.alpha = alpha
-        self.gamma = gamma
         self.model = LogisticRegression(
             C=1.0 / alpha,      # scikit-learn uses C = 1/lambda (regularization)
             max_iter=max_iter,  # maximum optimization iterations

@@ -9,7 +9,7 @@ max_iter=1200
 
 # Parameters for the logistic regression model
 alpha_log=5.0
-#gamma_log=0.0
+gamma_log=1.0
 #max_iter_log=1200
 
 # Parameters for the multi-layer perceptron model

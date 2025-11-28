@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # Pipeline
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, max_iter=None, hidden_layer_sizes=None, activation=None, random_state=42, n_estimators=100, max_depth=None, C=None, loss=None, 
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None, hidden_layer_sizes=None, activation=None, random_state=42, n_estimators=100, max_depth=None, C=None, loss=None, 
     ):
         '''
         Initialize the pipeline with specified embedding and model parameters.
@@ -143,7 +143,6 @@ class Pipeline:
         elif self.model_name == "logreg":
             self.model = logreg.make(
                 alpha=self.alpha,
-                gamma=self.gamma, 
                 max_iter=self.max_iter
             )
             self.model.train(self.X_train, self.y_train)

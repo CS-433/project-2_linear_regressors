@@ -5,12 +5,17 @@ from sklearn.model_selection import train_test_split
 def load_raw_data(train_size, valid_size, random_state=42): ##########
     """
     Load positive/negative tweets + test tweets.
-    Return:
-    - train_texts: list[str]
-    - valid_texts: list[str]
-    - test_texts: list[str]
-    - y_train: list[int]
-    - y_valid: list[int]
+    Args:
+        train_size (int): Number of training samples
+        valid_size (int): Number of validation samples
+        random_state (int): Random seed for reproducibility
+
+    Returns:
+        train_texts (list[str]): Training set documents
+        valid_texts (list[str]): Validation set documents
+        test_texts (list[str]): Test set documents
+        y_train (list[int]): Training set labels
+        y_valid (list[int]): Validation set labels
     """
 
     # load train (pos + neg)
@@ -29,12 +34,6 @@ def load_raw_data(train_size, valid_size, random_state=42): ##########
     df_train, df_valid = train_test_split(
         df, test_size=0.1, random_state=random_state, shuffle=True ##########
     )
-
-    # df_train = df_train.sample(frac=1, random_state=42)  # shuffle
-
-    # Subsample based on requested sizes
-    # df_train = df_train.sample(train_size, random_state=42)
-    # df_valid = df_valid.sample(valid_size, random_state=42)
 
     # reset indices
     df_train = df_train.reset_index(drop=True)

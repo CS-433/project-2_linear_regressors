@@ -32,6 +32,9 @@ def make(train_txt, valid_txt, test_txt, model_path=None, save_model_path=None, 
 
     # Function to convert a tweet into a single vector
     def tweet_to_vec(tweet):
+        '''
+        
+        '''
         words = tweet.split()
         # Keep only words present in the FastText vocabulary
         vecs = [model.wv[w] for w in words if w in model.wv]

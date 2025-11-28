@@ -4,16 +4,9 @@ import itertools
 import pandas as pd
 from pipelines.pipeline_generic import Pipeline
 from sklearn.metrics import accuracy_score, f1_score
+import os
 
-# Définition des hyperparamètres à tester pour chaque modèle
-'''
-grid_params = {"mlp": {
-        "alpha": [0.02],
-        "hidden_layer_sizes": [(128,)],
-        "activation": ["relu"]}}
-
-embeddings = ["word2vec"]
-'''
+# Hyperparameter definitions for grid search
 grid_params = {
     "logreg": {
         "alpha": [0.1, 1, 5, 10]
@@ -29,16 +22,16 @@ grid_params = {
     },
     "random_forest": {
         "n_estimators": [50, 100, 150, 200],
-        "max_depth": [10, 20, 30, None]  # None = pas de limite
+        "max_depth": [10, 20, 30, None]
     }
 }
 
-# Embeddings à tester
+# Embeddings to test
 embeddings = ["word2vec", "fasttext", "glove", "tfidf"]
 
 all_results = []
 
-
+# Grid search over models, embeddings, and hyperparameters
 for embedding in embeddings:
     for model_name, params_dict in grid_params.items():
         keys, values = zip(*params_dict.items())
@@ -47,7 +40,7 @@ for embedding in embeddings:
 
             print(f"\n=== Testing model={model_name}, embedding={embedding}, params={params} ===")
 
-            # Construction de la pipeline avec uniquement les paramètres définis
+            # Initialize pipeline with current parameters
             if model_name == "logreg":
                 pipe = Pipeline(
                     embedding=embedding,
@@ -88,7 +81,7 @@ for embedding in embeddings:
                     max_depth=params["max_depth"]
                 )
 
-            # Run et évaluation
+            # Run and evaluate
             pipe.run()
             preds = pipe.evaluate()
 
@@ -103,7 +96,79 @@ for embedding in embeddings:
             })
             all_results.append(results_entry)
 
-# Sauvegarde
+# Save all results
 df = pd.DataFrame(all_results)
 df.to_csv("grid_search/parameters_model_selection.csv", index=False)
-print("\nGrid search completed! Results saved to grid_search/model_selection.csv")
+print("\nGrid search completed! Results saved to grid_search/parameters_model_selection.csv")
+
+save_path = "grid_search/parameters_model_selection.csv"
+
+# After grid search, extract best F1 scores for each model-embedding combo
+best_path_f1 = "grid_search/best_model_selection_f1.csv"
+
+if os.path.exists(save_path):
+    print("\nExisting results detected. Loading file instead of recomputing...")
+    df = pd.read_csv(save_path)
+    best_rows = []
+    grouped = df.groupby(["model", "embedding"])
+
+for (model, embedding), group in grouped:
+    best_f1 = group["f1"].max()
+    best_rows.append({
+        "model": model,
+        "embedding": embedding,
+        "best_f1": best_f1
+    })
+
+df_best_f1 = pd.DataFrame(best_rows)
+df_best_f1.to_csv(best_path_f1, index=False)
+print("Best-F1 summary saved to:", best_path_f1)
+
+# Print the 3 best f1 scores overall
+top3_f1 = df_best_f1.nlargest(3, 'best_f1')[['model', 'embedding', 'best_f1']]
+print("\nTop 3 F1 scores overall:")
+print(top3_f1.to_string(index=False))
+'''
+Results printed in the terminal:
+
+Top 3 F1 scores overall:
+        model embedding  best_f1
+          mlp     tfidf 0.799801
+random_forest     tfidf 0.792400
+          svm     tfidf 0.792188
+'''
+
+# After grid search, extract best accuracy scores for each model-embedding combo
+best_path_acc = "grid_search/best_model_selection_acc.csv"
+
+if os.path.exists(save_path):
+    print("\nExisting results detected. Loading file instead of recomputing...")
+    df = pd.read_csv(save_path)
+    best_rows = []
+    grouped = df.groupby(["model", "embedding"])
+
+for (model, embedding), group in grouped:
+    best_acc = group["accuracy"].max()
+    best_rows.append({
+        "model": model,
+        "embedding": embedding,
+        "best_acc": best_acc
+    })
+
+df_best_acc = pd.DataFrame(best_rows)
+df_best_acc.to_csv(best_path_acc, index=False)
+print("Best-Accuracy summary saved to:", best_path_acc)
+
+# Print the 3 best accuracy scores overall
+top3_acc = df_best_acc.nlargest(3, 'best_acc')[['model', 'embedding', 'best_acc']]
+print("\nTop 3 Accuracy scores overall:")       
+print(top3_acc.to_string(index=False))
+'''
+Results printed in the terminal:
+
+Top 3 Accuracy scores overall:
+ model embedding  best_acc
+   mlp     tfidf    0.7985
+   svm     tfidf    0.7925
+logreg     tfidf    0.7890
+'''

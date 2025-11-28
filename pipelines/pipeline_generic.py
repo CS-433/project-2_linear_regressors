@@ -1,27 +1,43 @@
 from preprocessing import hf_tokenizer, tfidf, fasttext, word2vec, glove
 from preprocessing.loader import load_raw_data
-from models import logreg, svm, random_forest, mlp, hf_classifier
-#from trainers.sklearn_trainer import train_sklearn # to delete
+from models import logreg, svm, random_forest, mlp
 from trainers.hf_trainer import train_hf
 from helpers.plots import plot_confusion_matrix, plot_training_curves, save_metrics, plot_comparison
 from helpers.utils import save_submit, ensure_dir, set_global_seed
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-
+# Pipeline
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000,      alpha=None, gamma=None, max_iter=None, # logreg + mlp model ###sara###
-    hidden_layer_sizes=None, activation=None, random_state=42, # mlp model params ###sara###
-    n_estimators=100, max_depth=None, # random forest params ###sara###
-    C=None, loss=None, # SVM params ###sara###
-    grid_search=False):
+    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, max_iter=None, hidden_layer_sizes=None, activation=None, random_state=42, n_estimators=100, max_depth=None, C=None, loss=None, 
+    ):
+        '''
+        Initialize the pipeline with specified embedding and model parameters.
+        
+        Args:
+            embedding (str): Type of text embedding to use
+            model (str): Machine learning model to train
+            train_size (int): Number of training samples
+            valid_size (int): Number of validation samples
+            alpha (float, optional): Regularization strength for certain models
+            max_iter (int, optional): Maximum iterations for model training
+            hidden_layer_sizes (tuple, optional): Hidden layer sizes for MLP
+            activation (str, optional): Activation function for MLP
+            random_state (int): Random seed for reproducibility
+            n_estimators (int): Number of trees for Random Forest
+            max_depth (int, optional): Maximum depth for Random Forest
+            C (float, optional): Regularization parameter for SVM
+            loss (str, optional): Loss function for SVM
+        
+        Returns:
+            None
+        '''
         self.embedding = embedding
         self.model_name = model
         self.train_size = train_size
         self.valid_size = valid_size
         self.alpha = alpha
-        self.gamma = gamma
         self.max_iter = max_iter
         self.hidden_layer_sizes = hidden_layer_sizes
         self.activation = activation
@@ -30,10 +46,17 @@ class Pipeline:
         self.max_depth = max_depth
         self.C = C
         self.loss = loss
-        self.grid_search = grid_search ####sara###  
-
 
     def load_data(self):
+        '''
+        Load the data.
+
+        Args:
+            self: Instance of MetricsLogger
+
+        Returns:
+            None
+        '''
         (self.train_txt,
          self.valid_txt,
          self.test_txt,
@@ -43,6 +66,15 @@ class Pipeline:
         self.valid_labels = self.y_valid
 
     def preprocess(self):
+        '''
+        Preprocess the data.
+
+        Args:
+            self: Instance of MetricsLogger
+
+        Returns:
+            None
+        '''
         print(f"[PREPROCESS] Using embedding: {self.embedding}")
 
         if self.embedding == "tfidf":
@@ -83,6 +115,15 @@ class Pipeline:
             raise ValueError(f"Unknown embedding: {self.embedding}")
 
     def train(self):
+        '''
+        Train the model.
+
+        Args:
+            self: Instance of MetricsLogger
+
+        Returns:
+            None
+        '''
         print(f"[TRAIN] Training model: {self.model_name}")
 
         # HuggingFace models
@@ -105,7 +146,7 @@ class Pipeline:
                 gamma=self.gamma, 
                 max_iter=self.max_iter
             )
-            self.model.train(self.X_train, self.y_train) ###sara###
+            self.model.train(self.X_train, self.y_train)
 
         elif self.model_name == "svm":
             self.model = svm.make(
@@ -113,7 +154,7 @@ class Pipeline:
                 loss=self.loss,
                 max_iter=self.max_iter
             )
-            self.model.train(self.X_train, self.y_train) ###sara###
+            self.model.train(self.X_train, self.y_train)
 
         elif self.model_name == "random_forest":
             self.model = random_forest.make(
@@ -132,7 +173,7 @@ class Pipeline:
                 max_iter=self.max_iter,
                 random_state=self.random_state
             )
-            self.model.fit(self.X_train, self.y_train) ###sara###
+            self.model.fit(self.X_train, self.y_train) 
     
         else:
             raise ValueError(f"Unknown learning model: {self.model_name}")
@@ -140,6 +181,15 @@ class Pipeline:
 
 
     def evaluate(self):
+        '''
+        Evaluate the model.
+
+        Args:
+            self: Instance of MetricsLogger
+
+        Returns:
+            None
+        '''
         print("[EVAL] Evaluating model...")
 
         # HuggingFace evaluation
@@ -200,6 +250,15 @@ class Pipeline:
         return preds
     
     def save(self):
+        '''
+        Save the predictions and the model.
+
+        Args:
+            self: Instance of MetricsLogger
+
+        Returns:
+            None
+        '''
         print("[SAVE] Saving predictions + model...")
 
         # HuggingFace save
@@ -231,6 +290,15 @@ class Pipeline:
             pickle.dump(self.model, f)
 
     def run(self):
+        '''
+        Run the pipeline.
+
+        Args:
+            self: Instance of MetricsLogger
+
+        Returns:
+            None
+        '''
         print(f"\n========= RUNNING PIPELINE =========")
         print(f"Embedding = {self.embedding}")
         print(f"Model     = {self.model_name}")

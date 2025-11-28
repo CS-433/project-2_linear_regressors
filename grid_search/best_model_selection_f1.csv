@@ -1,0 +1,17 @@
+model,embedding,best_f1
+logreg,fasttext,0.7182539682539683
+logreg,glove,0.5989356555394292
+logreg,tfidf,0.789
+logreg,word2vec,0.7694595934556272
+mlp,fasttext,0.75
+mlp,glove,0.6683087027914614
+mlp,tfidf,0.7998012916045703
+mlp,word2vec,0.7844455112818051
+random_forest,fasttext,0.7457168620378719
+random_forest,glove,0.6526972804279982
+random_forest,tfidf,0.7924003707136237
+random_forest,word2vec,0.7637757546717777
+svm,fasttext,0.7425742574257426
+svm,glove,0.6543739279588336
+svm,tfidf,0.7921882824236355
+svm,word2vec,0.7854330708661418

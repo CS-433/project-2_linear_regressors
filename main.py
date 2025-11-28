@@ -9,7 +9,7 @@ torch.backends.mps.allow_tf32 = False
 # # Choose your embedding, model and data size here :)
 embeddings = ["tfidf", "fasttext", "word2vec", "glove", "vinai/bertweet-base", "roberta-base", "cardiffnlp/twitter-roberta-base", "vinai/bertweet-large"]
 models = ["hf", "logreg", "mlp", "random_forest", "svm"]
-# # data size maximums: train_size=2_250_000, valid_size=250_000 (by default if you don't specify)
+# data size maximums: train_size=2_250_000, valid_size=250_000 (by default if you don't specify)
 embedding = "vinai/bertweet-base"
 model = "hf"
 train_size = 2000

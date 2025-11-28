@@ -30,9 +30,6 @@ C = 1.0
 loss = "hinge"
 #max_iter_svm = 2000
 
-# Parameters for grid search
-grid_search = True
-
 #############################################
 Pipeline(
     embedding="word2vec",
@@ -50,8 +47,7 @@ Pipeline(
     n_estimators=n_estimators,
     max_depth=max_depth,
     C=C,
-    loss=loss,
-    grid_search=grid_search
+    loss=loss
 ).run() 
 
 plot_comparison()

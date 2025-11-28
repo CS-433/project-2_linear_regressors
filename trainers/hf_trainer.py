@@ -10,16 +10,17 @@ from helpers.utils import ensure_dir, set_global_seed
 
 def train_hf(model_name, tokenizer, train_ds, valid_ds, train_size, random_state=42): ##########
     """
-    Train a HuggingFace transformer model.
+    Train a HuggingFace transformer model
+    
     Args:
-        model_name (str): Name of the HuggingFace model.
-        tokenizer: Tokenizer object.
-        train_ds: Training dataset.
-        valid_ds: Validation dataset.
-        train_size (int): Size of the training dataset.
+        model_name (str): Name of the HuggingFace model
+        tokenizer: Tokenizer object
+        train_ds: Training dataset
+        valid_ds: Validation dataset
+        train_size (int): Size of the training dataset
     Returns:
-        trainer: Trained HuggingFace Trainer object.
-        logger: MetricsLogger object containing training metrics.
+        trainer: Trained HuggingFace Trainer object
+        logger: MetricsLogger object containing training metrics
     """
 
     # load HF model

@@ -1,9 +1,9 @@
-# preprocessing/word2vec.py
 import os
 import numpy as np
 import pickle
 from gensim.models import Word2Vec
 
+# Path configurations
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 RESULTS_DIR = os.path.join(BASE_DIR, "saved_models/embeddings/word2vec")
 EMB_FILE = os.path.join(RESULTS_DIR, "word2vec.model")
@@ -15,13 +15,11 @@ def ensure_results_dir():
     Ensure that the directory used to store Word2Vec artifacts exists.
     Creates the directory if it does not already exist.
 
-    Parameters
-    ----------
-    None
+    Args:
+        None
 
-    Returns
-    -------
-    None
+    Returns:
+        None
     """
     if not os.path.exists(RESULTS_DIR):
         os.makedirs(RESULTS_DIR)
@@ -35,23 +33,15 @@ def build_word2vec(texts, vector_size=300, window=5, min_count=1, epochs=10):
     If a saved model already exists, it is loaded. Otherwise, a new
     Word2Vec model is trained on the provided texts and saved to disk.
 
-    Parameters
-    ----------
-    texts : list of str
-        List of raw text documents.
-    vector_size : int, optional (default=300)
-        Dimensionality of each word embedding vector.
-    window : int, optional (default=5)
-        Context window size used by Word2Vec.
-    min_count : int, optional (default=1)
-        Minimum word frequency required to be included in the vocabulary.
-    epochs : int, optional (default=10)
-        Number of training epochs.
+    Args:
+        texts (list of str): List of raw text documents
+        vector_size (int, optional): Dimensionality of each word embedding vector. Default is 300
+        window (int, optional): Context window size used by Word2Vec. Default is 5
+        min_count (int, optional): Minimum word frequency required to be included in the vocabulary. Default is 1
+        epochs (int, optional): Number of training epochs. Default is 10
 
-    Returns
-    -------
-    Word2Vec
-        Trained or loaded Word2Vec model.
+    Returns:
+        Word2Vec: Trained or loaded Word2Vec model
     """
     ensure_results_dir()
 
@@ -88,25 +78,16 @@ def build_word2vec(texts, vector_size=300, window=5, min_count=1, epochs=10):
 
 def text_to_vec(text, model, vector_size=300):
     """
-    Convert a raw text into a single embedding vector by averaging
-    the embeddings of all known words.
-
+    Convert a raw text into a single embedding vector by averaging the embeddings of all known words.
     Unknown words (not in the Word2Vec vocabulary) are ignored.
 
-    Parameters
-    ----------
-    text : str
-        Input sentence/document.
-    model : Word2Vec
-        Word2Vec model providing word embeddings.
-    vector_size : int, optional (default=300)
-        Dimensionality of the output vector.
+    Args:
+        text (str): Input sentence/document
+        model (Word2Vec): Word2Vec model providing word embeddings
+        vector_size (int, optional): Dimensionality of the output vector. Default is 300
 
-    Returns
-    -------
-    numpy.ndarray, shape (vector_size,)
-        Averaged embedding for the text. Returns a zero vector
-        if no word in the text is found in the model.
+    Returns:
+        numpy.ndarray, shape (vector_size,): Averaged embedding for the text. Returns a zero vector if no word in the text is found in the model.
     """
     tokens = text.split()
     vecs = [model.wv[w] for w in tokens if w in model.wv]
@@ -119,27 +100,17 @@ def text_to_vec(text, model, vector_size=300):
 
 def make(train_texts, valid_texts, test_texts):
     """
-    Main preprocessing function for the pipeline.
-    Builds (or loads) a Word2Vec model on all provided texts, and
-    converts each document into a fixed-size embedding vector.
+    Main preprocessing function for the pipeline. Builds (or loads) a Word2Vec model on all provided texts, and converts each document into a fixed-size embedding vector.
 
-    Parameters
-    ----------
-    train_texts : list of str
-        Training set documents.
-    valid_texts : list of str
-        Validation set documents.
-    test_texts : list of str
-        Test set documents.
+    Args:
+        train_texts (list of str): Training set documents
+        valid_texts (list of str): Validation set documents
+        test_texts (list of str): Test set documents
 
-    Returns
-    -------
-    X_train : numpy.ndarray, shape (n_train, vector_size)
-        Matrix of averaged embeddings for the training texts.
-    X_valid : numpy.ndarray, shape (n_valid, vector_size)
-        Matrix of averaged embeddings for the validation texts.
-    X_test : numpy.ndarray, shape (n_test, vector_size)
-        Matrix of averaged embeddings for the test texts.
+    Returns:
+        X_train (numpy.ndarray, shape (n_train, vector_size)): Matrix of averaged embeddings for the training texts
+        X_valid (numpy.ndarray, shape (n_valid, vector_size)): Matrix of averaged embeddings for the validation texts
+        X_test (numpy.ndarray, shape (n_test, vector_size)): Matrix of averaged embeddings for the test texts
     """
     # Build or load the model using all available texts
     all_texts = train_texts + valid_texts + test_texts

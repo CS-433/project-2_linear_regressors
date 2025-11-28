@@ -1,28 +1,20 @@
-# models/mlp.py
-
 from sklearn.neural_network import MLPClassifier
 
+# Make function to create MLPModel
 def make(hidden_layer_sizes, activation, alpha, max_iter, random_state=42, shuffle=True, learning_rate_init=0.001, learning_rate='constant'):
     """
     Create and return an MLPModel instance.
 
-    Parameters
-    ----------
-    hidden_layer_sizes : tuple
-        Size of hidden layers, e.g., (100,) for one hidden layer with 100 units.
-    activation : str
-        Activation function ('relu', 'tanh', 'logistic').
-    alpha : float
-        L2 penalty (regularization term).
-    max_iter : int
-        Maximum number of iterations.
-    random_state : int
-        Random seed for reproducibility.
+    Args:
+        hidden_layer_sizes (tuple): Size of hidden layers, e.g., (100,) for one hidden layer with 100 units
+        activation (str): Activation function ('relu', 'tanh', 'logistic')
+        alpha (float): L2 penalty (regularization term)
+        max_iter (int): Maximum number of iterations
+        random_state (int): Random seed for reproducibility
 
-    Returns
-    -------
-    MLPModel
-        An initialized MLP wrapper.
+
+    Returns:
+        MLPModel: An initialized MLP wrapper.
     """
     model = MLPClassifier(
         hidden_layer_sizes=hidden_layer_sizes,
@@ -34,13 +26,23 @@ def make(hidden_layer_sizes, activation, alpha, max_iter, random_state=42, shuff
     )
     return model
 
-
+# Class definition for MLPModel
 class MLPModel:
-    """
-    Wrapper class around scikit-learn's MLPClassifier.
-    """
 
     def __init__(self, hidden_layer_sizes, activation, alpha, max_iter, random_state):
+        '''
+        Initialize the MLP model with given hyperparameters.
+
+        Args:
+            hidden_layer_sizes (tuple): Size of hidden layers
+            activation (str): Activation function
+            alpha (float): L2 penalty (regularization term)
+            max_iter (int): Maximum number of iterations
+            random_state (int): Random seed for reproducibility
+
+        Returns:
+            None
+        '''
         self.model = MLPClassifier(
             hidden_layer_sizes=hidden_layer_sizes,
             activation=activation,
@@ -51,10 +53,27 @@ class MLPModel:
         )
 
     def train(self, X, y):
-        """Fit the MLP model."""
+        """
+        Fit the MLP model.
+        
+        Args:
+            X (array-like, shape (n_samples, n_features)) : Input data matrix.
+            y (array-like, shape (n_samples,)) : Binary class labels.
+
+        Returns:
+            None
+        """
         self.model.fit(X, y)
 
     def predict(self, X):
-        """Predict class labels."""
+        """
+        Predict class labels.
+        
+        Args:
+            X (array-like, shape (n_samples, n_features)) : Input data matrix for prediction
+        
+        Returns:
+            (array, shape (n_samples,)): Predicted class labels
+        """
         return self.model.predict(X)
 

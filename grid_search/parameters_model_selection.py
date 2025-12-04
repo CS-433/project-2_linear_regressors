@@ -103,7 +103,7 @@ print("\nGrid search completed! Results saved to grid_search/parameters_model_se
 
 save_path = "grid_search/parameters_model_selection.csv"
 
-# After grid search, extract best F1 scores for each model-embedding combo
+# After grid search, extract best F1 scores for each model-embedding combo and the hyperparameters that achieved them
 best_path_f1 = "grid_search/best_model_selection_f1.csv"
 
 if os.path.exists(save_path):
@@ -117,7 +117,8 @@ for (model, embedding), group in grouped:
     best_rows.append({
         "model": model,
         "embedding": embedding,
-        "best_f1": best_f1
+        "best_f1": best_f1,
+        "best_params": group.loc[group["f1"].idxmax()].drop(["model", "embedding", "accuracy", "f1"]).to_dict()
     })
 
 df_best_f1 = pd.DataFrame(best_rows)
@@ -125,9 +126,10 @@ df_best_f1.to_csv(best_path_f1, index=False)
 print("Best-F1 summary saved to:", best_path_f1)
 
 # Print the 3 best f1 scores overall
-top3_f1 = df_best_f1.nlargest(3, 'best_f1')[['model', 'embedding', 'best_f1']]
+top3_f1 = df_best_f1.nlargest(3, 'best_f1')[['model', 'embedding', 'best_f1', 'best_params']]
 print("\nTop 3 F1 scores overall:")
 print(top3_f1.to_string(index=False))
+
 '''
 Results printed in the terminal:
 
@@ -138,7 +140,7 @@ random_forest     tfidf 0.792400
           svm     tfidf 0.792188
 '''
 
-# After grid search, extract best accuracy scores for each model-embedding combo
+# After grid search, extract best accuracy scores for each model-embedding combo and the hyperparameters that achieved them
 best_path_acc = "grid_search/best_model_selection_acc.csv"
 
 if os.path.exists(save_path):
@@ -152,7 +154,8 @@ for (model, embedding), group in grouped:
     best_rows.append({
         "model": model,
         "embedding": embedding,
-        "best_acc": best_acc
+        "best_acc": best_acc,
+        "best_params": group.loc[group["accuracy"].idxmax()].drop(["model", "embedding", "accuracy", "f1"]).to_dict()
     })
 
 df_best_acc = pd.DataFrame(best_rows)
@@ -160,7 +163,7 @@ df_best_acc.to_csv(best_path_acc, index=False)
 print("Best-Accuracy summary saved to:", best_path_acc)
 
 # Print the 3 best accuracy scores overall
-top3_acc = df_best_acc.nlargest(3, 'best_acc')[['model', 'embedding', 'best_acc']]
+top3_acc = df_best_acc.nlargest(3, 'best_acc')[['model', 'embedding', 'best_acc', 'best_params']]
 print("\nTop 3 Accuracy scores overall:")       
 print(top3_acc.to_string(index=False))
 '''

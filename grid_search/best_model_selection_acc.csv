@@ -1,17 +1,17 @@
-model,embedding,best_acc
-logreg,fasttext,0.716
-logreg,glove,0.5855
-logreg,tfidf,0.789
-logreg,word2vec,0.7675
-mlp,fasttext,0.7235
-mlp,glove,0.609
-mlp,tfidf,0.7985
-mlp,word2vec,0.7755
-random_forest,fasttext,0.718
-random_forest,glove,0.6225
-random_forest,tfidf,0.776
-random_forest,word2vec,0.7535
-svm,fasttext,0.74
-svm,glove,0.597
-svm,tfidf,0.7925
-svm,word2vec,0.782
+model,embedding,best_acc,best_params
+logreg,fasttext,0.716,"{'alpha': 0.1, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+logreg,glove,0.5855,"{'alpha': 10.0, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+logreg,tfidf,0.789,"{'alpha': 0.1, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+logreg,word2vec,0.7675,"{'alpha': 0.1, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+mlp,fasttext,0.7235,"{'alpha': 0.01, 'hidden_layer_sizes': '(128,)', 'activation': 'tanh', 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+mlp,glove,0.609,"{'alpha': 0.1, 'hidden_layer_sizes': '(256, 128)', 'activation': 'relu', 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+mlp,tfidf,0.7985,"{'alpha': 1.0, 'hidden_layer_sizes': '(256, 128)', 'activation': 'relu', 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+mlp,word2vec,0.7755,"{'alpha': 1.0, 'hidden_layer_sizes': '(256, 128)', 'activation': 'relu', 'C': nan, 'loss': nan, 'n_estimators': nan, 'max_depth': nan}"
+random_forest,fasttext,0.718,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': 200.0, 'max_depth': 10.0}"
+random_forest,glove,0.6225,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': 200.0, 'max_depth': nan}"
+random_forest,tfidf,0.776,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': 100.0, 'max_depth': nan}"
+random_forest,word2vec,0.7535,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': nan, 'loss': nan, 'n_estimators': 100.0, 'max_depth': 20.0}"
+svm,fasttext,0.74,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': 10.0, 'loss': 'squared_hinge', 'n_estimators': nan, 'max_depth': nan}"
+svm,glove,0.597,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': 0.01, 'loss': 'hinge', 'n_estimators': nan, 'max_depth': nan}"
+svm,tfidf,0.7925,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': 1.0, 'loss': 'squared_hinge', 'n_estimators': nan, 'max_depth': nan}"
+svm,word2vec,0.782,"{'alpha': nan, 'hidden_layer_sizes': nan, 'activation': nan, 'C': 10.0, 'loss': 'squared_hinge', 'n_estimators': nan, 'max_depth': nan}"

@@ -34,14 +34,14 @@ max_iter_svm = 1000
 #############################################
 Pipeline(
     embedding="tfidf",
-    model="logreg",
+    model="random_forest",
     #train_size=train_size,
     #valid_size=valid_size,
     alpha=alpha_log,
     #learning_rate_init=learning_rate_init,
     #learning_rate=learning_rate,
     #shuffle=shuffle,
-    max_iter=max_iter_mlp,
+    max_iter=max_iter_svm,
     hidden_layer_sizes=hidden_layer_sizes,
     activation=activation,
     random_state=random_state,

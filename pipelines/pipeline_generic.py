@@ -275,9 +275,8 @@ class Pipeline:
 
         # Sklearn save
         test_preds = self.model.predict(self.X_test)
-        final_preds = np.array([1 if p == 1 else -1 for p in test_preds])
 
-        save_submit(final_preds, f"{self.embedding}_{self.model_name}")
+        save_submit(test_preds, f"{self.embedding}_{self.model_name}")
 
         save_dir = f"saved_models/sklearn/{self.embedding}_{self.model_name}"
         ensure_dir(save_dir)

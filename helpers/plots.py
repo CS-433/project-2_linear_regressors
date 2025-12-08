@@ -7,6 +7,16 @@ from helpers.utils import ensure_dir
 import numpy as np
 
 def plot_confusion_matrix(preds, true_labels, name, train_size):
+    '''
+    Plot and save confusion matrix for given predictions and true labels.
+    Args:
+        preds (list or array): Predicted class labels
+        true_labels (list or array): True class labels
+        name (str): Name of the model or experiment
+        train_size (int): Size of the training dataset used
+    Returns:
+        str: Path to the saved confusion matrix plot
+    '''
     if train_size == 2_250_000:
         train_size = "full"
     ensure_dir("results/individual_plots")
@@ -27,6 +37,15 @@ def plot_confusion_matrix(preds, true_labels, name, train_size):
 
 
 def plot_training_curves(logger, model_name, train_size):
+    '''
+    Plot and save training curves for given logger data.
+    Args:
+        logger (object): Logger object containing training data
+        model_name (str): Name of the model or experiment
+        train_size (int): Size of the training dataset used
+    Returns:
+        None
+    '''
     if train_size == 2_250_000:
         train_size = "full"
     ensure_dir("results/individual_plots")
@@ -58,7 +77,7 @@ def plot_training_curves(logger, model_name, train_size):
     # eval accuracy
     if logger.eval_acc:
         steps, accs = zip(*logger.eval_acc)
-        plt.plot(steps, accs)
+        plt.plot(steps, accs, marker="o")
         plt.title(f"Eval Accuracy – {model_name} – {train_size}")
         path3 = f"results/individual_plots/{model_name}/evalacc_{model_name}_{train_size}.png"
         os.makedirs(os.path.dirname(path3), exist_ok=True)
@@ -67,8 +86,60 @@ def plot_training_curves(logger, model_name, train_size):
     else:
         print(f"[PLOT] No evaluation accuracy data to plot for {model_name}")
 
+def plot_train_vs_eval_loss(logger, model_name, train_size):
+    '''
+    Plot and save comparison of training and evaluation loss curves.
+    Args:
+        logger (object): Logger object containing training data
+        model_name (str): Name of the model or experiment
+        train_size (int): Size of the training dataset used
+    Returns:
+        None
+    '''
+    if train_size == 2_250_000:
+        train_size = "full"
+    ensure_dir("results/individual_plots")
+
+    if not logger.train_loss or not logger.eval_loss:
+        print("[PLOT] Need both train and eval loss to plot comparison.")
+        return
+
+    train_steps, train_losses = zip(*logger.train_loss)
+    eval_steps, eval_losses   = zip(*logger.eval_loss)
+
+    # Remove last eval point if it corresponds to the minimum loss (best model saved)
+    if len(eval_losses) > 1 and eval_losses[-1] == min(eval_losses):
+        eval_steps  = eval_steps[:-1]
+        eval_losses = eval_losses[:-1]
+
+    plt.plot(train_steps, train_losses, label="Train loss")
+    plt.plot(eval_steps, eval_losses, label="Eval loss", marker="o")
+
+    plt.xlabel("Steps")
+    plt.ylabel("Loss")
+    plt.title(f"Train vs Eval Loss – {model_name} – {train_size}")
+    plt.legend()
+
+    path = f"results/individual_plots/{model_name}/train_vs_eval_{model_name}_{train_size}.png"
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    plt.savefig(path, dpi=200, bbox_inches="tight")
+    plt.close()
+
+
 
 def save_metrics(name, acc, prec, rec, f1, path="results/comparison_plots/metrics.json"):
+    '''
+    Save evaluation metrics to a JSON file for later comparison.
+    Args:
+        name (str or list): Name of the model or experiment
+        acc (float): Accuracy score
+        prec (float): Precision score
+        rec (float): Recall score
+        f1 (float): F1 score
+        path (str): Path to the JSON file to save metrics
+    Returns:
+        None
+    '''
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     if isinstance(name, list):
@@ -167,7 +238,7 @@ def plot_comparison(models=None, labels=None,
     ensure_dir("results/comparison_plots")
 
     # Filename includes only the chosen models
-    short_name = "_".join([str(m).replace("/", "-") for m in models]) # jai changé ca
+    short_name = "_".join([str(m).replace("/", "-") for m in models])
     png_path = f"results/comparison_plots/{output_name}_{short_name}.png"
 
     plt.tight_layout()

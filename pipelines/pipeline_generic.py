@@ -2,7 +2,7 @@ from preprocessing import hf_tokenizer, tfidf, fasttext, word2vec, glove
 from preprocessing.loader import load_raw_data
 from models import logreg, svm, random_forest, mlp
 from trainers.hf_trainer import train_hf
-from helpers.plots import plot_confusion_matrix, plot_training_curves, save_metrics, plot_comparison
+from helpers.plots import plot_confusion_matrix, plot_training_curves, save_metrics, plot_comparison, plot_train_vs_eval_loss
 from helpers.utils import save_submit, ensure_dir, set_global_seed
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -135,7 +135,7 @@ class Pipeline:
                 train_ds=self.train_ds,
                 valid_ds=self.valid_ds,
                 train_size=self.train_size,
-                random_state=self.random_state ##########
+                random_state=self.random_state
             )
             return
 
@@ -210,6 +210,10 @@ class Pipeline:
                 self.logger, self.embedding, self.train_size
             )
 
+            plot_train_vs_eval_loss(
+                self.logger, self.embedding, self.train_size
+            )
+
             save_metrics(
                 name=f"{self.embedding}_{self.train_size}",
                 acc=acc,
@@ -235,6 +239,14 @@ class Pipeline:
             self.y_valid,
             f"{self.embedding}_{self.model_name}",
             self.train_size
+        )
+
+        plot_training_curves(
+            self.logger, f"{self.embedding}_{self.model_name}", self.train_size
+        )
+
+        plot_train_vs_eval_loss(
+            self.logger, f"{self.embedding}_{self.model_name}", self.train_size
         )
 
         save_metrics(
@@ -303,7 +315,7 @@ class Pipeline:
         print(f"Train size = {self.train_size}")
         print("====================================\n")
 
-        set_global_seed(self.random_state) ##########
+        set_global_seed(self.random_state)
         self.load_data()
         self.preprocess()
         self.train()

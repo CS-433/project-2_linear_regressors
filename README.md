@@ -59,3 +59,8 @@ project/
 ├── main.py                             # Main entry point to run any pipeline
 ├── env.yml                             # Conda environment definition
 └── README.md                           # Project documentation
+
+
+
+Vu que le modele est trop gros pour etre push sur github, ci-après le lien du drive. Sur le drive, il faut télécharger le dossier "saved_models" et le mettre dans le projet. Le chemin doit être exactement celui là pour que le code dans main.py fonctionne: saved_models/hf/vinai/bertweet-base_2250000/..., normalement en téléchargeant le dossier saved_models du drive c'est bon il n'y a qu'à le mettre dans le projet.
+LIEN DU DRIVE AVEC LE MODELE FINAL: https://drive.google.com/drive/folders/1LYd9CHCcVyHs4K6S5zOLnroO1bzDtDaO?usp=sharing

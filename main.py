@@ -9,22 +9,22 @@ import os
 torch.use_deterministic_algorithms(True)
 torch.backends.mps.allow_tf32 = False
 
-# # Choose your embedding, model and data size here :)
-embeddings = ["tfidf", "fasttext", "word2vec", "glove", "vinai/bertweet-base", "roberta-base", "cardiffnlp/twitter-roberta-base", "vinai/bertweet-large"]
+# # Choose your vectorizer, model and data size here :)
+vectorizer = ["tfidf", "fasttext", "word2vec", "glove", "vinai/bertweet-base", "roberta-base", "cardiffnlp/twitter-roberta-base", "vinai/bertweet-large"]
 models = ["hf", "logreg", "mlp", "random_forest", "svm"]
 # data size maximums: train_size=2_250_000, valid_size=250_000 (by default if you don't specify)
 
 # With this seeup you will obtain our highest reproducible results
 # The run is long, it took around 12 hours
 # AICrowd submission ID: #304074, score: 0.900, secondary score: 0.902
-embedding = "vinai/bertweet-base"
+vectorizer = "vinai/bertweet-base"
 model = "hf"
 train_size = 2_250_000
 valid_size = 250_000
 
 # Uncomment to run the pipeline with the chosen setup
 # pipe = Pipeline(
-#     embedding=embedding,
+#     vectorizer=vectorizer,
 #     model=model,
 #     train_size=train_size,
 #     valid_size=valid_size,

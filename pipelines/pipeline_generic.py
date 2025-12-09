@@ -10,13 +10,13 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # Pipeline
 class Pipeline:
 
-    def __init__(self, embedding, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None, hidden_layer_sizes=None, activation=None, random_state=42, n_estimators=100, max_depth=None, C=None, loss=None, 
+    def __init__(self, vectorizer, model, train_size=2_500_000, valid_size=250_000, alpha=None, gamma=None, max_iter=None, hidden_layer_sizes=None, activation=None, random_state=42, n_estimators=100, max_depth=None, C=None, loss=None, 
     ):
         '''
-        Initialize the pipeline with specified embedding and model parameters.
+        Initialize the pipeline with specified vectorizer and model parameters.
         
         Args:
-            embedding (str): Type of text embedding to use
+            vectorizer (str): Type of text vectorizer to use
             model (str): Machine learning model to train
             train_size (int): Number of training samples
             valid_size (int): Number of validation samples
@@ -33,7 +33,7 @@ class Pipeline:
         Returns:
             None
         '''
-        self.embedding = embedding
+        self.vectorizer = vectorizer
         self.model_name = model
         self.train_size = train_size
         self.valid_size = valid_size
@@ -75,29 +75,29 @@ class Pipeline:
         Returns:
             None
         '''
-        print(f"[PREPROCESS] Using embedding: {self.embedding}")
+        print(f"[PREPROCESS] Using vectorizer: {self.vectorizer}")
 
-        if self.embedding == "tfidf":
+        if self.vectorizer == "tfidf":
             self.X_train, self.X_valid, self.X_test = tfidf.make(
                 self.train_txt, self.valid_txt, self.test_txt
             )
 
-        elif self.embedding == "fasttext":
+        elif self.vectorizer == "fasttext":
             self.X_train, self.X_valid, self.X_test = fasttext.make(
                 self.train_txt, self.valid_txt, self.test_txt
             )
 
-        elif self.embedding == "word2vec":
+        elif self.vectorizer == "word2vec":
             self.X_train, self.X_valid, self.X_test = word2vec.make(
                 self.train_txt, self.valid_txt, self.test_txt
             )
 
-        elif self.embedding == "glove":
+        elif self.vectorizer == "glove":
             self.X_train, self.X_valid, self.X_test = glove.make(
                 self.train_txt, self.valid_txt, self.test_txt
             )
 
-        elif "bert" in self.embedding.lower():  # bertweet / roberta...
+        elif "bert" in self.vectorizer.lower():  # bertweet / roberta...
             (self.tokenizer,
             self.train_ds,
             self.valid_ds,
@@ -107,12 +107,12 @@ class Pipeline:
                 valid_texts=self.valid_txt,
                 valid_labels=self.valid_labels,
                 test_texts=self.test_txt,
-                model_name=self.embedding
+                model_name=self.vectorizer
             )
 
             
         else:
-            raise ValueError(f"Unknown embedding: {self.embedding}")
+            raise ValueError(f"Unknown vectorizer: {self.vectorizer}")
 
     def train(self):
         '''
@@ -127,10 +127,10 @@ class Pipeline:
         print(f"[TRAIN] Training model: {self.model_name}")
 
         # HuggingFace models
-        if "bert" in self.embedding.lower():
+        if "bert" in self.vectorizer.lower():
             (self.trainer,
              self.logger) = train_hf(
-                model_name=self.embedding,
+                model_name=self.vectorizer,
                 tokenizer=self.tokenizer,
                 train_ds=self.train_ds,
                 valid_ds=self.valid_ds,
@@ -192,7 +192,7 @@ class Pipeline:
         print("[EVAL] Evaluating model...")
 
         # HuggingFace evaluation
-        if "bert" in self.embedding.lower():
+        if "bert" in self.vectorizer.lower():
 
             preds = self.trainer.predict(self.valid_ds).predictions.argmax(1)
 
@@ -203,19 +203,19 @@ class Pipeline:
 
             plot_confusion_matrix(
                 preds, self.y_valid,
-                f"{self.embedding}",
+                f"{self.vectorizer}",
                 self.train_size
             )
             plot_training_curves(
-                self.logger, self.embedding, self.train_size
+                self.logger, self.vectorizer, self.train_size
             )
 
             plot_train_vs_eval_loss(
-                self.logger, self.embedding, self.train_size
+                self.logger, self.vectorizer, self.train_size
             )
 
             save_metrics(
-                name=f"{self.embedding}_{self.train_size}",
+                name=f"{self.vectorizer}_{self.train_size}",
                 acc=acc,
                 prec=prec,
                 rec=rec,
@@ -237,20 +237,20 @@ class Pipeline:
         plot_confusion_matrix(
             preds,
             self.y_valid,
-            f"{self.embedding}_{self.model_name}",
+            f"{self.vectorizer}_{self.model_name}",
             self.train_size
         )
 
         plot_training_curves(
-            self.logger, f"{self.embedding}_{self.model_name}", self.train_size
+            self.logger, f"{self.vectorizer}_{self.model_name}", self.train_size
         )
 
         plot_train_vs_eval_loss(
-            self.logger, f"{self.embedding}_{self.model_name}", self.train_size
+            self.logger, f"{self.vectorizer}_{self.model_name}", self.train_size
         )
 
         save_metrics(
-            name=f"{self.embedding}_{self.model_name}_{self.train_size}",
+            name=f"{self.vectorizer}_{self.model_name}_{self.train_size}",
             acc=acc,
             prec=prec,
             rec=rec,
@@ -273,29 +273,29 @@ class Pipeline:
         print("[SAVE] Saving predictions + model...")
 
         # HuggingFace save
-        if "bert" in self.embedding.lower():
+        if "bert" in self.vectorizer.lower():
             test_preds = self.trainer.predict(self.test_ds).predictions.argmax(1)
 
-            save_submit(test_preds, f"{self.embedding}_{self.train_size}")
+            save_submit(test_preds, f"{self.vectorizer}_{self.train_size}")
 
-            save_dir = f"saved_models/hf/{self.embedding}_{self.train_size}"
+            save_dir = f"saved_models/hf/{self.vectorizer}_{self.train_size}"
             ensure_dir(save_dir)
-            self.trainer.save_model(f"saved_models/hf/{self.embedding}_{self.train_size}")
-            self.tokenizer.save_pretrained(f"saved_models/hf/{self.embedding}_{self.train_size}")
+            self.trainer.save_model(f"saved_models/hf/{self.vectorizer}_{self.train_size}")
+            self.tokenizer.save_pretrained(f"saved_models/hf/{self.vectorizer}_{self.train_size}")
 
             return
 
         # Sklearn save
         test_preds = self.model.predict(self.X_test)
 
-        save_submit(test_preds, f"{self.embedding}_{self.model_name}")
+        save_submit(test_preds, f"{self.vectorizer}_{self.model_name}")
 
-        save_dir = f"saved_models/sklearn/{self.embedding}_{self.model_name}"
+        save_dir = f"saved_models/sklearn/{self.vectorizer}_{self.model_name}"
         ensure_dir(save_dir)
 
         # model saving 
         import pickle
-        path = f"saved_models/sklearn/{self.embedding}_{self.model_name}.pkl"
+        path = f"saved_models/sklearn/{self.vectorizer}_{self.model_name}.pkl"
         with open(path, "wb") as f:
             pickle.dump(self.model, f)
 
@@ -310,7 +310,7 @@ class Pipeline:
             None
         '''
         print(f"\n========= RUNNING PIPELINE =========")
-        print(f"Embedding = {self.embedding}")
+        print(f"Vectorizer = {self.vectorizer}")
         print(f"Model     = {self.model_name}")
         print(f"Train size = {self.train_size}")
         print("====================================\n")

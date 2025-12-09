@@ -54,7 +54,7 @@ def build_glove_if_needed():
     subprocess.run(["bash", "glove_scripts/cut_vocab.sh"], cwd=BASE_DIR, check=True)
     subprocess.run(["python", "glove_scripts/pickle_vocab.py"], cwd=BASE_DIR, check=True)
     subprocess.run(["python", "glove_scripts/cooc.py"], cwd=BASE_DIR, check=True)
-    subprocess.run(["python", "glove_scripts/glove_solution.py"], cwd=BASE_DIR, check=True)
+    subprocess.run(["python", "glove_scripts/glove_template.py"], cwd=BASE_DIR, check=True)
 
     # Move outputs into glove_scripts/results/
     ensure_results_dir()
